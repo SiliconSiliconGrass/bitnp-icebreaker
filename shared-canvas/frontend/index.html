@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>共享画布</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            touch-action: none;
+        }
+        canvas {
+            display: block;
+            background-color: white;
+            touch-action: none;
+        }
+        .controls {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            z-index: 100;
+        }
+        button {
+            padding: 8px 12px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="sharedCanvas"></canvas>
+    <div class="controls">
+        <button id="clearBtn">清空画布</button>
+        <input type="color" id="colorPicker" value="#000000">
+        <input type="range" id="widthSlider" min="1" max="50" value="5">
+    </div>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+        // 初始化画布
+        const canvas = document.getElementById('sharedCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 设置画布大小为窗口大小
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        // 绘图状态
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+        let currentColor = '#000000';
+        let currentWidth = 5;
+        
+        // 获取控制元素
+        const colorPicker = document.getElementById('colorPicker');
+        const widthSlider = document.getElementById('widthSlider');
+        const clearBtn = document.getElementById('clearBtn');
+        
+        // 事件监听
+        colorPicker.addEventListener('change', (e) => currentColor = e.target.value);
+        widthSlider.addEventListener('input', (e) => currentWidth = e.target.value);
+        clearBtn.addEventListener('click', clearCanvas);
+        
+        // 触摸事件处理
+        canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+        canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+        canvas.addEventListener('touchend', handleTouchEnd);
+        
+        // 鼠标事件处理（用于桌面浏览器测试）
+        canvas.addEventListener('mousedown', handleMouseDown);
+        canvas.addEventListener('mousemove', handleMouseMove);
+        canvas.addEventListener('mouseup', handleMouseEnd);
+        canvas.addEventListener('mouseout', handleMouseEnd);
+        
+        // WebSocket连接
+        let hostName = window.location.host;
+        if (window.location.host.includes(':')) {
+            hostName = window.location.host.split(':')[0];
+        }
+        const host = `${hostName}:9850`;
+        const socket = io(`http://${host}`, {
+            transports: ['websocket'],
+            upgrade: false,
+            path: '/socket.io'         // 指定Socket.IO路径（与后端一致）
+        });
+        
+        socket.onopen = function(e) {
+            console.log("WebSocket连接已建立");
+            // 请求当前画布状态
+            socket.emit("requestCanvas", JSON.stringify({}));
+        };
+        
+        socket.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            
+            if (data.type === "canvasData") {
+                // 收到画布数据，绘制图像
+                const img = new Image();
+                img.onload = function() {
+                    ctx.drawImage(img, 0, 0);
+                };
+                img.src = data.imageData;
+            } else if (data.type === "drawLine") {
+                // 收到其他用户的绘制指令
+                drawLine(data.x1, data.y1, data.x2, data.y2, data.color, data.width);
+            } else if (data.type === "clearCanvas") {
+                // 收到清空画布指令
+                clearCanvas();
+            }
+        };
+
+        socket.on('drawLine', (data) => {
+            // console.log('收到绘图数据:', data);
+            data = JSON.parse(data);
+            drawLine(data.x1, data.y1, data.x2, data.y2, data.color, data.width);
+        });
+
+        socket.on('canvasData', (data) => {
+            const dataList = data.imageData;
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // clear
+            for (let data of dataList) {
+                drawLine(data.x1, data.y1, data.x2, data.y2, data.color, data.width);
+            }
+        });
+
+        socket.on('clearCanvas', (data) => {
+            console.log('on clear')
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+        
+        socket.onclose = function(event) {
+            if (event.wasClean) {
+                console.log(`连接关闭，代码=${event.code} 原因=${event.reason}`);
+            } else {
+                console.log('连接中断');
+                // 尝试重新连接
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            }
+        };
+        
+        socket.onerror = function(error) {
+            console.log(`WebSocket错误: ${error.message}`);
+        };
+        
+        // 触摸处理函数
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            lastX = touch.clientX - rect.left;
+            lastY = touch.clientY - rect.top;
+            isDrawing = true;
+        }
+        
+        function handleTouchMove(e) {
+            e.preventDefault();
+            if (!isDrawing) return;
+            
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            
+            // 本地绘制
+            drawLine(lastX, lastY, x, y, currentColor, currentWidth);
+            
+            socket.emit('drawLine', JSON.stringify({
+                type: "drawLine",
+                x1: lastX,
+                y1: lastY,
+                x2: x,
+                y2: y,
+                color: currentColor,
+                width: currentWidth
+            }));
+            
+            lastX = x;
+            lastY = y;
+        }
+        
+        function handleTouchEnd() {
+            isDrawing = false;
+        }
+        
+        // 鼠标处理函数
+        function handleMouseDown(e) {
+            const rect = canvas.getBoundingClientRect();
+            lastX = e.clientX - rect.left;
+            lastY = e.clientY - rect.top;
+            isDrawing = true;
+        }
+        
+        function handleMouseMove(e) {
+            if (!isDrawing) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // 本地绘制
+            drawLine(lastX, lastY, x, y, currentColor, currentWidth);
+
+            // 发送绘制数据到服务器
+            socket.emit('drawLine', JSON.stringify({
+                type: "drawLine",
+                x1: lastX,
+                y1: lastY,
+                x2: x,
+                y2: y,
+                color: currentColor,
+                width: currentWidth
+            }));
+            
+            lastX = x;
+            lastY = y;
+        }
+        
+        function handleMouseEnd() {
+            isDrawing = false;
+        }
+        
+        // 绘制线条函数
+        function drawLine(x1, y1, x2, y2, color, width) {
+            console.log('drawing', x1, y1, x2, y2, color, width)
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = width;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+        }
+        
+        // 清空画布函数
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // 发送清空指令到服务器
+            console.log("clear!")
+            socket.emit('clearCanvas', JSON.stringify({}));
+        }
+    </script>
+</body>
+</html>
