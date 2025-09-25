@@ -1,11 +1,12 @@
 // src/router.js
-import { createRouter, createWebHistory } from 'vue-router'
+// import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import Directors from './pages/Directors.vue'
 import LotteryOrdered from './pages/LotteryOrdered.vue'
 import LotteryRandom from './pages/LotteryRandom.vue'
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes: [
     {
         path: '/directors',

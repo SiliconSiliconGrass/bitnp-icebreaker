@@ -28,9 +28,9 @@ npm run serve
 然后在浏览器打开`localhost:8080`
 
 提供以下页面：
-- `localhost:8080/directors`: 部长介绍页；
-- `localhost:8080/lottery-random`: 抽奖页；
-- `localhost:8080/lottery-ordered`: 伪抽奖页。
+- `localhost:8080/#/directors`: 部长介绍页；
+- `localhost:8080/#/lottery-random`: 抽奖页；
+- `localhost:8080/#/lottery-ordered`: 伪抽奖页。
 
 
 使用下箭头键/上箭头键来播放动画 (类似PPT)
