@@ -1,4 +1,4 @@
-<!-- 伪抽奖：固定排序 -->
+<!-- 伪抽奖：固定排序，只随机抽取特效 -->
 <template>
   <div class="background"></div>
   <RecruitAnimation ref="bangLottery" style="width: 100vh; height: 100vw;" :theme="theme"/>
@@ -149,6 +149,9 @@ export default {
   },
   mounted() {
     document.addEventListener('keydown', (e) => {
+      if (e.key === " ") {
+        this.skipAnimation();
+      }
       if (e.key === "ArrowDown") {
         if (this.playingAnim) {
           this.skipAnimation();

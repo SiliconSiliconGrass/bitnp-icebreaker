@@ -66,6 +66,7 @@ export default {
       const self = this;
 
       this.playingAnim = true;
+      // console.log(this.$refs.infoDisplay);
       this.$refs.infoDisplay.hide();
       this.theme = theme;
       this.$nextTick(() => {
@@ -91,6 +92,9 @@ export default {
   mounted() {
 
     document.addEventListener('keydown', (e) => {
+      if (e.key === " ") {
+        this.skipAnimation();
+      }
       if (e.key === "ArrowDown") {
         if (this.playingAnim) {
           this.skipAnimation();
