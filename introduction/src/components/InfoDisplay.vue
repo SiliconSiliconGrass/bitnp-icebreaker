@@ -1,9 +1,9 @@
 <!-- 个人信息展示页 -->
 <template>
     <div class="container">
-        <div :class="(show && avatarUrl) ? 'avatar' : 'avatar avatar-hidden'" :style="{ backgroundImage: `url(${avatarUrl})`, backgroundSize: 'cover' }"></div>
-        <div :class="show ? 'info-box' : 'info-box info-box-hidden'">
-            <div class="name"> {{ name }} </div>
+        <div :class="(show && displayAvatarUrl) ? 'avatar' : 'avatar avatar-hidden'" :style="{ backgroundImage: `url(${displayAvatarUrl})`, backgroundSize: 'cover' }"></div>
+        <div :class="(show && displayName) ? 'info-box' : 'info-box info-box-hidden'">
+            <div class="name"> {{ displayName }} </div>
         </div>
         <div :class="show ? 'shumeiniang' : 'shumeiniang shumeiniang-hidden'" :style="{ backgroundImage: `url(${shumeiniangUrl})`}"></div>
     </div>
@@ -47,14 +47,20 @@ export default {
   data() {
     return {
         show: false,
-        shumeiniangUrl: ""
+        shumeiniangUrl: "",
+        displayName: "",
+        displayAvatarUrl: "",
     }
   },
   methods: {
     hide() {
+        this.displayName = "";
+        this.displayAvatarUrl = "";
         this.show = false;
     },
     display() {
+        this.displayName = this.name;
+        this.displayAvatarUrl = this.avatarUrl;
         if (this.shumeiniangImage === 'random' || !SHUMEINIANG_IMAGES[this.shumeiniangImage]) {
             const keys = Object.keys(SHUMEINIANG_IMAGES);
             const randomKey = keys[Math.floor(Math.random() * keys.length)];
