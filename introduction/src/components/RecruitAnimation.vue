@@ -92,8 +92,16 @@ export default {
     play() {
       // 将视频和音频进度调为最开始
       return new Promise((resolve) => {
-        this.audioUrl = THEMES[this.theme].audio;
-        this.videoUrl = THEMES[this.theme].video;
+        if (this.theme === 'random' || !THEMES[this.theme]) {
+          const themeKeys = Object.keys(THEMES);
+          const randomIndex = Math.floor(Math.random() * themeKeys.length);
+          const randomTheme = themeKeys[randomIndex];
+          this.audioUrl = THEMES[randomTheme].audio;
+          this.videoUrl = THEMES[randomTheme].video;
+        } else {
+          this.audioUrl = THEMES[this.theme].audio;
+          this.videoUrl = THEMES[this.theme].video;
+        }
         this.$nextTick(() => {
           this.$refs.audioPlayer.load();
           this.$refs.videoPlayer.load();

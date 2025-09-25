@@ -1,0 +1,32 @@
+// src/router.js
+import { createRouter, createWebHistory } from 'vue-router'
+import Directors from './pages/Directors.vue'
+import LotteryOrdered from './pages/LotteryOrdered.vue'
+import LotteryRandom from './pages/LotteryRandom.vue'
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [
+    {
+        path: '/directors',
+        name: 'directors',
+        component: Directors
+    },
+    {
+        path: '/lottery-random',
+        name: 'lottery-random',
+        component: LotteryRandom
+    },
+    {
+        path: '/lottery-ordered',
+        name: 'lottery-ordered',
+        component: LotteryOrdered
+    },
+    {
+        path: '/',
+        redirect: '/lottery-ordered' // TODO
+    }
+  ]
+})
+
+export default router

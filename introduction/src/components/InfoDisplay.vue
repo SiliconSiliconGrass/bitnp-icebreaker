@@ -1,7 +1,7 @@
 <!-- 个人信息展示页 -->
 <template>
     <div class="container">
-        <div :class="show ? 'avatar' : 'avatar avatar-hidden'" :style="{ backgroundImage: `url(${avatarUrl})`, backgroundSize: 'cover' }"></div>
+        <div :class="(show && avatarUrl) ? 'avatar' : 'avatar avatar-hidden'" :style="{ backgroundImage: `url(${avatarUrl})`, backgroundSize: 'cover' }"></div>
         <div :class="show ? 'info-box' : 'info-box info-box-hidden'">
             <div class="name"> {{ name }} </div>
         </div>
@@ -55,7 +55,7 @@ export default {
         this.show = false;
     },
     display() {
-        if (this.shumeiniangImage === 'random') {
+        if (this.shumeiniangImage === 'random' || !SHUMEINIANG_IMAGES[this.shumeiniangImage]) {
             const keys = Object.keys(SHUMEINIANG_IMAGES);
             const randomKey = keys[Math.floor(Math.random() * keys.length)];
             this.shumeiniangUrl = SHUMEINIANG_IMAGES[randomKey].url;
@@ -162,7 +162,7 @@ export default {
 
 .shumeiniang {
     position: fixed;
-    /* width: 40vw; */
+    width: 100vw;
     height: 100vh;
     /* height: auto; */
     aspect-ratio: 16/9;
