@@ -26,6 +26,7 @@ const THEMES = {
   "Arknights": {video: "/media/Arknights.mp4", audio: ""},
   "Wuhuamixin": {video: "/media/wuhuamixin.mp4", audio: ""},
   "StarRail": {video: "/media/StarRail.mp4", audio: "/media/StarRail.wav"},
+  "DeltaForce": {video: "/media/DeltaForce.mp4", audio: ""},
 }
 
 export default {

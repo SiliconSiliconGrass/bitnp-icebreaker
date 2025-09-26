@@ -18,7 +18,7 @@ const DIRECTORS = [
   {name: "江昆", avatarUrl: "", theme: "Wuhuamixin", shumeiniangImage: "ice-cream"},
   {name: "宋宇阳", avatarUrl: "", theme: "GenshinImpact", shumeiniangImage: "bread"},
   {name: "张一航", avatarUrl: "", theme: "Arknights", shumeiniangImage: "cake"},
-  {name: "杨尚昕", avatarUrl: "", theme: "GenshinImpact", shumeiniangImage: "cake"},
+  {name: "杨尚昕", avatarUrl: "", theme: "DeltaForce", shumeiniangImage: "air-plane"},
   {name: "陈超", avatarUrl: "", theme: "GenshinImpact", shumeiniangImage: "coffee"},
 ];
 
