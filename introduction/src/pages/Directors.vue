@@ -14,7 +14,12 @@ const DIRECTORS = [
   {name: "张家诚", avatarUrl: "/avatar/mugi.jpeg", theme: "Arknights", shumeiniangImage: "keyboard"},
   {name: "袁靖", avatarUrl: "/avatar/mio.jpeg", theme: "WutheringWaves", shumeiniangImage: "bass"},
   {name: "杨浩天", avatarUrl: "/avatar/ritsu.jpeg", theme: "PJSK", shumeiniangImage: "drum"},
-  {name: "郭逸戈", avatarUrl: "/avatar/yui.jpeg", theme: "BanGDream", shumeiniangImage: "guitar1"}
+  {name: "郭逸戈", avatarUrl: "/avatar/yui.jpeg", theme: "BanGDream", shumeiniangImage: "guitar1"},
+  {name: "江昆", avatarUrl: "", theme: "Wuhuamixin", shumeiniangImage: "ice-cream"},
+  {name: "宋宇阳", avatarUrl: "", theme: "GenshinImpact", shumeiniangImage: "bread"},
+  {name: "张一航", avatarUrl: "", theme: "Arknights", shumeiniangImage: "cake"},
+  {name: "杨尚昕", avatarUrl: "", theme: "GenshinImpact", shumeiniangImage: "cake"},
+  {name: "陈超", avatarUrl: "", theme: "GenshinImpact", shumeiniangImage: "coffee"},
 ];
 
 export default {
@@ -90,7 +95,6 @@ export default {
     }
   },
   mounted() {
-
     document.addEventListener('keydown', (e) => {
       if (e.key === " ") {
         this.skipAnimation();

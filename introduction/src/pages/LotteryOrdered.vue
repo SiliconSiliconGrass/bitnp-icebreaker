@@ -27,9 +27,10 @@ const AVAILABLE_SHUMEINIANG_IMAGES = [
 const AVAILABLE_THEMES = [
   "BanGDream",
   "GenshinImpact",
-  // "PJSK",
+  "PJSK",
   "WutheringWaves",
-  "Arknights"
+  "Arknights",
+  "StarRail"
 ];
 
 let bank = [];

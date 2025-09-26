@@ -24,6 +24,8 @@ const THEMES = {
   "PJSK": {video: "/media/PJSK.mp4", audio: ""},
   "WutheringWaves": {video: "/media/WutheringWaves.mp4", audio: "/media/WutheringWaves.wav"},
   "Arknights": {video: "/media/Arknights.mp4", audio: ""},
+  "Wuhuamixin": {video: "/media/wuhuamixin.mp4", audio: ""},
+  "StarRail": {video: "/media/StarRail.mp4", audio: "/media/StarRail.wav"},
 }
 
 export default {
